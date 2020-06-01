@@ -1,0 +1,9 @@
+node_modules
+
+swagger
+/src/api/
+/.idea/
+/.vscode/
+/swagger.json
+/swagger.yaml
+/res.yaml
