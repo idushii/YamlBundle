@@ -36,7 +36,7 @@ fs.readdir(base + parts, function (err, list) {
             listYamls[i * 2 + 1] = "$ref: '#/components/schemas/" + listYamls[i * 2 + 1].split('#/').pop() +  "'"
     }
 
-    fs.writeFileSync('res.yaml', listYamls.join(''))
+    fs.writeFileSync('res.yaml', listYamls.join('').split('-api-v1-').join('-'))
 })
 
 
