@@ -1,4 +1,7 @@
 let fs = require("fs")
+let path = require('path');
+
+const dirname = path.dirname;
 
 const base = "./swagger/"
 const name = "frontend.yaml"
@@ -8,8 +11,13 @@ String.prototype.replaceAll = function (search, replace) {
     return this.split(search).join(replace);
 }
 
+function loadYaml(path) {
+    return fs.readFileSync(path, 'utf-8');
+}
 
-let allYaml = fs.readFileSync(base + name, 'utf-8');
+
+let allYaml = loadYaml(base + name);
+
 
 // Составляю список ссылок
 function getRefsLinks(yaml) {
@@ -37,32 +45,33 @@ links = new Map();
 
 function extructRefByName(path, folder = '') {
     let oldName = (/#\/(.*)/gm).exec(path)[1]
-    let newName = path.split(/[(\.\/)(\#\/)]/).filter(v => v && v != 'yaml').join('__')
+    //let newName = [folder, ...path.split(/[(\.\/)(\#\/)]/).filter(v => v && v != 'yaml')].join('__')
+    let newName = path.split(/[(\.\/)(\#\/)]/).filter(v => v && v != 'yaml').pop()
     let filePath = path.replace('./', '').replace(/(\#\/\S*)/, '')
-    let fileFolder = require('path').dirname(filePath)
-    let fileName = fileFolder.split('/').pop();
+    let fileFolder = (dirname(folder + '/' + filePath))
+    let fileName = filePath.split('/').pop();
     let allRefText = fs.readFileSync(base + folder + '/' + filePath, 'utf-8')
 
     let value = allRefText.split(new RegExp("\n" + oldName + ":"))[0].split(/\n\S*\:/)[0].split('\r\n')
     value[0] = newName + ':';
     value = '    ' + value.filter(v => v).join('\r\n    ') + '\r\n'
-    links.set(path, newName)
+    links.set(path, {name: newName, path})
     return {newName, filePath, oldName, value, fileFolder, fileName}
 }
 
 
 // Получение массива внешних объектов
-function getRefsObjects(RefsNamesUnic) {
+function getRefsObjects(RefsNamesUnic, folder = '') {
     let Refs = new Map()
     RefsNamesUnic.forEach(path => {
 
-        let {value, newName, filePath, oldName, fileFolder, fileName} = extructRefByName(path)
+        let {value, newName, filePath, oldName, fileFolder, fileName} = extructRefByName(path, folder)
 
         //Рекурсивное выделение ссылок
         const LocalRefs = getRefsLinks(value);
 
         LocalRefs.forEach(value => {
-            let _filePath = path.replace('./', '').replace(/(\#\/\S*)/, '')
+            let _filePath = (folder + '/' + path).replace('./', '').replace(/(\#\/\S*)/, '').replace('//', '/')
             let [_fileName, _refName] = value.split('#/').filter(v => v)
             let _path = '';
             if (_refName) {
@@ -72,10 +81,13 @@ function getRefsObjects(RefsNamesUnic) {
                 _path = filePath + value;
             }
 
-            let ref = extructRefByName(path)
+            let ref = extructRefByName(path, folder)
             Refs.set(ref.newName, ref)
-            links.set((_fileName ?? fileName) + ref.newName, ref.newName)
-            links.set(value, ref.newName)
+            links.set((_fileName ?? fileName) + ref.newName, {
+                name: ref.newName,
+                path: (_fileName ?? fileName) + ref.newName
+            })
+            links.set(value, {name: ref.newName, path: value})
         })
 
         let _path = path.split('./').join('')
@@ -84,7 +96,8 @@ function getRefsObjects(RefsNamesUnic) {
             oldName,
             filePath,
             newName,
-            value
+            value,
+            oldPath: path,
         })
 
     })
@@ -94,23 +107,41 @@ function getRefsObjects(RefsNamesUnic) {
 RefsObjets = getRefsObjects(RefsNamesUnic);
 
 // Обновить ссылки
-RefsObjets.forEach(ref => {
-    allYaml = allYaml.replaceAll(ref.oldPath, '#/components/schemas/' + ref.newName)
+function updatedRefs(allYaml = '', refs, namePath, nameNameUpdate) {
+    let items = [...refs.values()]
+    items.forEach(ref => {
+        allYaml = allYaml.replaceAll("'" + ref[namePath] + "'", "'#/components/schemas/" + ref[nameNameUpdate] + "'")
+    })
+    return allYaml;
+}
+
+[...RefsObjets.values()].forEach(ref => {
+    let remoteRefs = getRefsLinks(ref.value)
+    var __ref = ref;
+    var folder = dirname(ref.filePath)
+
+    remoteRefs.forEach(_ref => {
+        console.log(_ref)
+        if (_ref.substr(0, 2) == './') {
+            // внешняя ссылка, надо загрузить код
+            let yaml = loadYaml( base +  dirname(folder + _ref).replaceAll('./', '/').replaceAll('#', ''))
+            let _RefsObjets = getRefsObjects([_ref], folder);
+            _RefsObjets.forEach((val, key) => RefsObjets.set(key, val))
+        }
+    })
 })
+
+allYaml = updatedRefs(allYaml, RefsObjets, 'oldPath', 'newName');
 
 // Составить итоговый текст yaml
 if (allYaml.indexOf('components:') === -1)
     allYaml += "\r\n\r\ncomponents:\r\n\r\n  schemas:\r\n\r\n"
 allYaml += '\r\n' + [...RefsObjets.values()].map(v => v.value).join('')
 
-// Обновить ссылки
-RefsObjets.forEach(ref => {
-    allYaml = allYaml.replaceAll(ref.oldPath, '#/components/schemas/' + ref.newName)
-})
+allYaml = updatedRefs(allYaml, RefsObjets, 'oldPath', 'newName');
+allYaml = updatedRefs(allYaml, links, 'path', 'name');
 
-links.forEach((name, path) => {
-    allYaml = allYaml.replaceAll(path, '#/components/schemas/' + name)
-})
+allYaml.replaceAll('-api-v1-', '-')
 
 fs.writeFileSync('res.yaml', allYaml)
 
