@@ -8,3 +8,4 @@ swagger
 /swagger.yaml
 /res.yaml
 /api.json
+/src/api-sdk/
