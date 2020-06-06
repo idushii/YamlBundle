@@ -62,7 +62,7 @@ fs.readdir(base + parts, function (err, list) {
 
     fs.writeFileSync(tempFile, listYamls)
 
-    exec(`openapi-generator generate --input-spec ${tempFile} --generator-name typescript-fetch  -t "template" --output ${output} --config api.json`, (err, stdout, stderr) => {
+    exec(`openapi-generator generate --input-spec ${tempFile} --generator-name typescript-fetch  -t "${process.mainModule.path}/template" --output ${output} --config api.json`, (err, stdout, stderr) => {
         if (err) {
             console.log(err)
         }
