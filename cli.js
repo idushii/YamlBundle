@@ -1,6 +1,8 @@
+#!/usr/bin/env node
+
 let fs = require("fs")
 let path = require('path');
-const { exec } = require('child_process');
+const {exec} = require('child_process');
 
 const dirname = path.dirname;
 
@@ -51,11 +53,12 @@ fs.readdir(base + parts, function (err, list) {
             listYamls[i * 2 + 1] = "$ref: '#/components/schemas/" + listYamls[i * 2 + 1].split('#/').pop() + "'"
     }
 
+    listYamls = listYamls.join('')
     if (hasDate) {
-        listYamls = listYamls.join('').replaceAll('format: date-time', '').replaceAll('format: date', '').replaceAll('-api-v1-', '-')
-    } else {
-        listYamls = listYamls.join('')
+        listYamls = listYamls.join('').replaceAll('format: date-time', '').replaceAll('format: date', '')
     }
+
+    listYamls = listYamls.replaceAll('-api-v1-', '-')
 
     fs.writeFileSync(tempFile, listYamls)
 
