@@ -257,7 +257,7 @@ export class {{classname}} extends runtime.BaseAPI {
             {{#hasBodyParam}}
             {{#bodyParam}}
             {{#isContainer}}
-            body: requestParameters.{{paramName}}{{#isListContainer}}{{#items}}{{^isPrimitiveType}}.map({{datatype}}ToJSON){{/isPrimitiveType}}{{/items}}{{/isListContainer}},
+            body: requestParameters.{{paramName}}{{#isListContainer}}{{#items}}{{^isPrimitiveType}}?.map({{datatype}}ToJSON){{/isPrimitiveType}}{{/items}}{{/isListContainer}},
             {{/isContainer}}
             {{^isContainer}}
             {{^isPrimitiveType}}
