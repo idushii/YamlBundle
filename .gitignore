@@ -10,3 +10,4 @@ swagger
 /api.json
 /src/api-sdk/
 /back/
+/template/.idea/workspace.xml

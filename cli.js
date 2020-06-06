@@ -54,8 +54,8 @@ fs.readdir(base + parts, function (err, list) {
     }
 
     listYamls = listYamls.join('')
-    if (hasDate) {
-        listYamls = listYamls.join('').replaceAll('format: date-time', '').replaceAll('format: date', '')
+    if (!hasDate) {
+        listYamls = listYamls.replaceAll('format: date-time', '').replaceAll('format: date', '')
     }
 
     listYamls = listYamls.replaceAll('-api-v1-', '-')
