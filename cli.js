@@ -40,7 +40,16 @@ fs.readdir(base + parts, function (err, list) {
 
     console.log(list)
 
-    list.forEach(val => components.push(loadYaml(base + parts + '/' + val).split('\r\n').map(v => `    ${v}`).join('\r\n')))
+    list
+        .forEach(val => components
+            .push(loadYaml(base + parts + '/' + val)
+            .split('\r\n')
+            .map(v => {
+                return v.split('\n').map(v => `    ${v}`).join('\n');
+            })
+            .join('\r\n')
+            )
+        )
 
     // Составить итоговый текст yaml
     allYaml += "\r\n\r\ncomponents:\r\n\r\n  schemas:\r\n\r\n"
@@ -60,6 +69,7 @@ fs.readdir(base + parts, function (err, list) {
 
     listYamls = listYamls.replaceAll('-api-v1-', '-')
 
+    fs.writeFileSync('tempFile.yaml', listYamls)
     fs.writeFileSync(tempFile, listYamls)
 
     exec(`openapi-generator generate --input-spec ${tempFile} --generator-name typescript-fetch  -t "${process.mainModule.path}/template" --output ${output} --config api.json`, (err, stdout, stderr) => {
