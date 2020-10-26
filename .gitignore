@@ -11,3 +11,4 @@ swagger
 /src/api-sdk/
 /back/
 /template/.idea/workspace.xml
+/lsp/
