@@ -23,7 +23,7 @@ const indexParts = args.findIndex(r => r == '--parts')
 const parts = indexParts != -1 ? args[indexParts + 1] : "parts"
 
 const indexTempFile = args.findIndex(r => r == '--temp')
-const tempFile = indexTempFile != -1 ? args[indexTempFile + 1] : "./temp.yaml"
+const tempFile = indexTempFile != -1 ? args[indexTempFile + 1] : "./tempFile.yaml"
 
 String.prototype.replaceAll = function (search, replace) {
     return this.split(search).join(replace);
@@ -75,8 +75,9 @@ fs.readdir(base + parts, function (err, list) {
     exec(`openapi-generator generate --input-spec ${tempFile} --generator-name typescript-fetch  -t "${process.mainModule.path}/template" --output ${output} --config api.json`, (err, stdout, stderr) => {
         if (err) {
             console.log(err)
+        } else {
+            fs.unlinkSync(tempFile)
         }
-        fs.unlinkSync(tempFile)
     });
 
 
