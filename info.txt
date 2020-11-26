@@ -1,0 +1,6 @@
+Как запустить dart
+
+Поставить jre, jdk
+
+Вручную поставить пакет @openapitools/openapi-generator-cli как глобально, так и локально.
+
