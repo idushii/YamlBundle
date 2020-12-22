@@ -75,7 +75,7 @@ listYamls = addDBOPostfix(listYamls);
 
 fs.writeFileSync(tempFile, listYamls)
 
-const cmd = `openapi-generator-cli generate --input-spec ${tempFile} --generator-name dart --output ./temp11 --config api.json`
+const cmd = `openapi-generator-cli generate --input-spec ${tempFile} --generator-name dart-dio --output ./temp11 --config open-generator-config.yaml`
 
 console.log(`run '${cmd}'`)
 

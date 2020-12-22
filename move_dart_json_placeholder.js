@@ -24,7 +24,7 @@ const options = {
     returnCountOfMatchesByPaths: true, // default
 }
 
-console.log('after_move')
+console.log('before_move')
 
 replaceInFiles(options)
     .then(({ changedFiles, countOfMatchesByPaths }) => {
