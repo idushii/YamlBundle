@@ -2,27 +2,16 @@
 
 let fs = require("fs")
 let path = require('path');
+const doMove  = require('./move_dart');
 const {exec} = require('child_process');
-const rimraf = require('rimraf');
-const fse = require('fs-extra');
-
-const dirname = path.dirname;
 
 const args = process.argv
-
-const hasDate = args.find(r => r == '--date') || false
-
-const indexFolderOutput = args.findIndex(r => r == '-o')
-const output = indexFolderOutput != -1 ? args[indexFolderOutput + 1] : "./src/api-sdk"
 
 const indexPathFile = args.findIndex(r => r == '-i')
 const pathFile = indexPathFile != -1 ? args[indexPathFile + 1] : ""
 
 const base = path.dirname(pathFile) + "/"
 const name = path.basename(pathFile) || "swagger.yaml"
-
-const indexParts = args.findIndex(r => r == '--parts')
-const parts = indexParts != -1 ? args[indexParts + 1] : "parts"
 
 const indexTempFile = args.findIndex(r => r == '--temp')
 const tempFile = indexTempFile != -1 ? args[indexTempFile + 1] : "./tempFile.yaml"
@@ -80,9 +69,13 @@ const cmd = `openapi-generator-cli generate --input-spec ${tempFile} --generator
 console.log(`run '${cmd}'`)
 
 exec(cmd, (err, stdout, stderr) => {
+    console.log(stdout)
     if (err) {
         console.log(err)
     } else {
+
+        doMove();
+
         //fs.unlinkSync(tempFile)
 
         /*await rimraf.sync("/target");

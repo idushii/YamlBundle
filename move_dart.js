@@ -1,67 +1,37 @@
-const replaceInFiles = require('replace-in-files');
 const rimraf = require('rimraf');
 const fse = require('fs-extra');
-const {exec} = require('child_process');
+const {exec, execSync} = require('child_process');
 
-var folder = 'C:\\Users\\User\\Documents\\checksy_mobile_api'
-var folderSrc = 'C:\\Users\\User\\Documents\\checksy_mobile_api\\src'
+function doMove() {
 
-rimraf.sync(folderSrc);
-fse.moveSync("temp11", folderSrc);
+    const folder = 'C:\\Users\\User\\Documents\\checksy_mobile_api'
+    const folderSrc = 'C:\\Users\\User\\Documents\\checksy_mobile_api\\src'
+    const tempFolder = './temp11';
+    const tempFolderLib = './temp11\\lib';
 
-fse.copySync("after_update_api_sdk_dart.bat", `${folderSrc}\\after_update_api_sdk_dart.bat`);
-fse.copySync("models.dart", `${folderSrc}\\models.dart`);
+    rimraf.sync(folderSrc);
 
-exec(`flutter format ${folderSrc}`, (err, stdout, stderr) => {});
-exec(`${folder}\\after_update_api_sdk_dart.bat`, (err, stdout, stderr) => {});
+    fse.copySync("models.dart", `${tempFolderLib}\\models.dart`);
+    fse.copySync(tempFolder, folderSrc);
 
-return;
+    fse.copySync("after_update_api_sdk_dart.bat", `${folderSrc}\\after_update_api_sdk_dart.bat`);
 
-const options = {
-    // See more: https://www.npmjs.com/package/globby
-    files: 'temp11/**/*',
-
-    // See more: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace
-    from: /package:openapi/g,  // string or regex
-    to: 'package:checksy_mobile/api-sdk', // string or fn  (fn: carrying last argument - path to replaced file)
-
-    saveOldFile: false, // default
-
-
-    //Character encoding for reading/writing files
-    encoding: 'utf8',  // default
-
-
-    shouldSkipBinaryFiles: true, // default
-    onlyFindPathsWithoutReplace: false, // default
-    returnPaths: true, // default
-    returnCountOfMatchesByPaths: true, // default
+    try {
+        try {
+            execSync(`cd ${folderSrc} && pub get`);
+            execSync(`cd ${folderSrc} && flutter clean`);
+            execSync(`cd ${folderSrc} && flutter pub run build_runner clean`);
+        } catch (e) {
+            console.error(e)
+        }
+        console.log(execSync(`cd ${folderSrc} && flutter pub get`));
+        console.log(execSync(`cd ${folderSrc} && flutter pub run build_runner build`));
+        console.log(execSync(`flutter format ${folderSrc}`));
+    } catch (e) {
+        console.error(e)
+    }
 }
 
-console.log('before_move')
+// doMove();
 
-replaceInFiles(options)
-    .then(({ changedFiles, countOfMatchesByPaths }) => {
-        /*
-                console.log('Modified files:', changedFiles);
-                console.log('Count of matches by paths:', countOfMatchesByPaths);
-                console.log('was called with:', options);
-        */
-
-        console.log('move')
-
-        rimraf.sync('C:\\Users\\User\\Documents\\checksy_mobile\\lib\\api-sdk');
-        fse.moveSync("temp11/lib", 'C:\\Users\\User\\Documents\\checksy_mobile\\lib\\api-sdk');
-
-        exec('flutter format C:\\Users\\User\\Documents\\checksy_mobile\\lib\\api-sdk', (err, stdout, stderr) => {});
-
-    })
-    .catch(error => {
-        console.error('Error after occurred:', error);
-    });
-
-
-
-
-
-
+module.exports = doMove;
