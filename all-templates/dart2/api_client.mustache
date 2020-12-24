@@ -1,7 +1,21 @@
 {{>header}}
 {{>part_of}}
+
+typedef OnPreSend(
+String path,
+String method,
+Iterable<QueryParam> queryParams,
+Object body,
+Map<String, String> headerParams,
+Map<String, String> formParams,
+String nullableContentType,
+List<String> authNames,
+);
+
+typedef Future<Map<String, String>> GetAuthToken();
+
 class ApiClient {
-  ApiClient({this.basePath = '{{{basePath}}}'}) {
+  ApiClient({this.basePath = '{{{basePath}}}', this.onPreSend, this.getAuthToken,}) {
   {{#hasAuthMethods}}
     // Setup authentications (key: authentication name, value: authentication).
   {{#authMethods}}
@@ -21,9 +35,14 @@ class ApiClient {
   {{/isOAuth}}
   {{/authMethods}}
   {{/hasAuthMethods}}
+  {{^hasAuthMethods}}
+      _authentications[r'accessToken'] = HttpBearerAuth();
+  {{/hasAuthMethods}}
   }
 
   final String basePath;
+  final OnPreSend onPreSend;
+  final GetAuthToken getAuthToken;
 
   var _client = Client();
 
@@ -81,6 +100,9 @@ class ApiClient {
 
     headerParams.addAll(_defaultHeaderMap);
 
+    if (getAuthToken != null)
+      headerParams.addAll(await getAuthToken());
+
     final urlEncodedQueryParams = queryParams
       .where((param) => param.value != null)
       .map((param) => '$param');
@@ -128,6 +150,18 @@ class ApiClient {
         ? formParams
         : serialize(body);
       final nullableHeaderParams = headerParams.isEmpty ? null : headerParams;
+
+    if (onPreSend != null)
+        onPreSend(
+            path,
+            method,
+            queryParams,
+            body,
+            headerParams,
+            formParams,
+            nullableContentType,
+            authNames,
+        );
 
       switch(method) {
         case 'POST': return await _client.post(url, headers: nullableHeaderParams, body: msgBody,);

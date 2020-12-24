@@ -210,7 +210,32 @@ class {{{classname}}} {
     }
     return map;
   }
-}
+
+    copyWith({
+
+
+    {{#vars}}
+        {{^isEnum}}
+            {{#minimum}}
+                // minimum: {{{minimum}}}
+            {{/minimum}}
+            {{#maximum}}
+                // maximum: {{{maximum}}}
+            {{/maximum}}
+        {{/isEnum}}
+        {{{datatypeWithEnum}}} {{{name}}},
+
+    {{/vars}}
+    }) {
+    return {{{classname}}}(
+    {{#vars}}
+        {{{name}}}: {{{name}}} ?? this.{{name}},
+    {{/vars}}
+    );
+    }
+
+
+    }
 {{#vars}}
     {{#isEnum}}
         {{^isContainer}}
