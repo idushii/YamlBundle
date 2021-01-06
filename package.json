@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "balanced-match": "^1.0.0",
     "argparse": "^1.0.10",
     "brace-expansion": "^1.1.11",
