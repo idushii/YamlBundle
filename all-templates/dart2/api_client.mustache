@@ -44,17 +44,17 @@ class ApiClient {
   final OnPreSend onPreSend;
   final GetAuthToken getAuthToken;
 
-  var _client = Client();
+  var _client = Dio();
 
   /// Returns the current HTTP [Client] instance to use in this class.
   ///
   /// The return value is guaranteed to never be null.
-  Client get client => _client;
+  Dio get client => _client;
 
   /// Requests to use a new HTTP [Client] in this class.
   ///
   /// If the [newClient] is null, an [ArgumentError] is thrown.
-  set client(Client newClient) {
+  set client(Dio newClient) {
     if (newClient == null) {
       throw ArgumentError('New client instance cannot be null.');
     }
@@ -68,13 +68,13 @@ class ApiClient {
      _defaultHeaderMap[key] = value;
   }
 
-  dynamic deserialize(String json, String targetType, {bool growable}) {
+  dynamic deserialize(dynamic json, String targetType, {bool growable}) {
     // Remove all spaces.  Necessary for reg expressions as well.
     targetType = targetType.replaceAll(' ', '');
 
     return targetType == 'String'
       ? json
-      : _deserialize(jsonDecode(json), targetType, growable: true == growable);
+        : _deserialize(json, targetType, growable: true == growable);
   }
 
   String serialize(Object obj) => obj == null ? '' : json.encode(obj);
@@ -118,8 +118,10 @@ class ApiClient {
     }
 
     try {
+      // TODO отключил multipart
+
       // Special case for uploading a single file which isn’t a 'multipart/form-data'.
-      if (
+      /*if (
         body is MultipartFile && (nullableContentType == null ||
         !nullableContentType.toLowerCase().startsWith('multipart/form-data'))
       ) {
@@ -144,7 +146,7 @@ class ApiClient {
         request.headers.addAll(headerParams);
         final response = await _client.send(request);
         return Response.fromStream(response);
-      }
+      }*/
 
       final msgBody = nullableContentType == 'application/x-www-form-urlencoded'
         ? formParams
@@ -164,12 +166,12 @@ class ApiClient {
         );
 
       switch(method) {
-        case 'POST': return await _client.post(url, headers: nullableHeaderParams, body: msgBody,);
-        case 'PUT': return await _client.put(url, headers: nullableHeaderParams, body: msgBody,);
-        case 'DELETE': return await _client.delete(url, headers: nullableHeaderParams,);
-        case 'PATCH': return await _client.patch(url, headers: nullableHeaderParams, body: msgBody,);
-        case 'HEAD': return await _client.head(url, headers: nullableHeaderParams,);
-        case 'GET': return await _client.get(url, headers: nullableHeaderParams,);
+        case 'POST': return await _client.post(url, options: Options(headers: nullableHeaderParams), data: msgBody,);
+        case 'PUT': return await _client.put(url, options: Options(headers: nullableHeaderParams), data: msgBody,);
+        case 'DELETE': return await _client.delete(url, options: Options(headers: nullableHeaderParams), data: msgBody,);
+        case 'PATCH': return await _client.patch(url, options: Options(headers: nullableHeaderParams), data: msgBody,);
+        case 'HEAD': return await _client.head(url, options: Options(headers: nullableHeaderParams), data: msgBody,);
+        case 'GET': return await _client.get(url, options: Options(headers: nullableHeaderParams),);
       }
     } on SocketException catch (e, trace) {
       throw ApiException.withInner(HttpStatus.badRequest, 'Socket operation failed: $method $path', e, trace,);
@@ -177,7 +179,7 @@ class ApiClient {
       throw ApiException.withInner(HttpStatus.badRequest, 'TLS/SSL communication failed: $method $path', e, trace,);
     } on IOException catch (e, trace) {
       throw ApiException.withInner(HttpStatus.badRequest, 'I/O operation failed: $method $path', e, trace,);
-    } on ClientException catch (e, trace) {
+    } on DioError catch (e, trace) {
       throw ApiException.withInner(HttpStatus.badRequest, 'HTTP connection failed: $method $path', e, trace,);
     } on Exception catch (e, trace) {
       throw ApiException.withInner(HttpStatus.badRequest, 'Exception occurred: $method $path', e, trace,);

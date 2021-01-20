@@ -99,7 +99,7 @@ class {{{classname}}} {
     final nullableContentType = contentTypes.isNotEmpty ? contentTypes[0] : null;
     final authNames = <String>[{{#authMethods}}'{{{name}}}'{{^-last}}, {{/-last}}{{/authMethods}}];
 
-    if (
+    /*if (
       nullableContentType != null &&
       nullableContentType.toLowerCase().startsWith('multipart/form-data')
     ) {
@@ -131,7 +131,7 @@ class {{{classname}}} {
       }
       {{/isFile}}
       {{/formParams}}
-    }
+    }*/
 
     return await apiClient.invokeAPI(
       path,
@@ -184,9 +184,9 @@ class {{{classname}}} {
     // When a remote server returns no body with a status of 204, we shall not decode it.
     // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
     // FormatException when trying to decode an empty string.
-    if (response.body != null && response.statusCode != HttpStatus.noContent) {
+    if (response.data != null && response.statusCode != HttpStatus.noContent) {
       {{#isArray}}
-      return (apiClient.deserialize(_decodeBodyBytes(response), '{{{returnType}}}') as List)
+      return (apiClient.deserialize(response.data, '{{{returnType}}}') as List)
         .map((item) => item as {{{returnBaseType}}})
         .toList(growable: false);
       {{/isArray}}
@@ -195,7 +195,7 @@ class {{{classname}}} {
       return {{{returnType}}}.from(apiClient.deserialize(_decodeBodyBytes(response), '{{{returnType}}}'));
         {{/isMap}}
         {{^isMap}}
-      return apiClient.deserialize(_decodeBodyBytes(response), '{{{returnType}}}') as {{{returnType}}};
+      return apiClient.deserialize(response.data, '{{{returnType}}}') as {{{returnType}}};
         {{/isMap}}
       {{/isArray}}
     }
