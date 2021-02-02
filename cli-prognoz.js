@@ -5,7 +5,7 @@ const fetch = require('node-fetch');
 let fs = require("fs")
 let path = require('path');
 // const doMove  = require('./move_dart2');
-const {exec} = require('child_process');
+const {exec, execSync} = require('child_process');
 
 
 const remoteFileUrl = 'https://swagger.prognoz.me/swagger-client.json';
@@ -65,26 +65,15 @@ async function main() {
     fs.writeFileSync(tempFile, listYamls)
 
     const cmd = `openapi-generator-cli generate --input-spec ${tempFile} --generator-name dart --output ../prognoz_api_sdk -t "./all-templates/dart2" --config open-generator-config-prognoz.yaml`
+    const cmdSendRepo = `cd ../ && git add * && git commit "update" && git push`
 
     console.log(`run '${cmd}'`)
 
-    exec(cmd, (err, stdout, stderr) => {
-        console.log(stdout)
-        if (err) {
-            console.log(err)
-        } else {
+    const res = await execSync(cmd);
+    console.log(String.fromCharCode.apply(null, res));
 
-            // doMove();
-
-            //fs.unlinkSync(tempFile)
-
-            /*await rimraf.sync("/target");
-
-            fse.moveSync("temp", output);*/
-
-        }
-    });
-
+    const res2 = await execSync(cmdSendRepo);
+    console.log(String.fromCharCode.apply(null, res2));
 
 }
 
