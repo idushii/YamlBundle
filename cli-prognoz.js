@@ -81,8 +81,8 @@ async function main() {
         const res2 = (await (execSync(cmdSendRepo)));
         console.log(String.fromCharCode.apply(null, res2));
     } catch (e) {
-        console.log(e.output)
-        console.log(String.fromCharCode.apply(null, e.output));
+        console.log(e.output[1])
+        console.log(String.fromCharCode.apply(null, e.output[1]));
     }
 
 }
