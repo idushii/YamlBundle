@@ -64,7 +64,7 @@ async function main() {
 
     fs.writeFileSync(tempFile, listYamls)
 
-    const cmd = `openapi-generator-cli generate --input-spec ${tempFile} --generator-name dart --output ./temp11 -t "./all-templates/dart2" --config open-generator-config-prognoz.yaml`
+    const cmd = `openapi-generator-cli generate --input-spec ${tempFile} --generator-name dart --output ../prognoz_api_sdk -t "./all-templates/dart2" --config open-generator-config-prognoz.yaml`
 
     console.log(`run '${cmd}'`)
 
