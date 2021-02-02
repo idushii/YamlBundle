@@ -70,11 +70,19 @@ async function main() {
 
     console.log(`run '${cmd}'`)
 
-    const res = await execSync(cmd);
-    console.log(String.fromCharCode.apply(null, res));
+    try {
+        const res = await execSync(cmd);
+        console.log(String.fromCharCode.apply(null, res));
+    } catch (e) {
+        e
+    }
 
-    const res2 = await execSync(cmdSendRepo);
-    console.log(String.fromCharCode.apply(null, res2));
+    try {
+        const res2 = (await (execSync(cmdSendRepo)));
+        console.log(String.fromCharCode.apply(null, res2));
+    } catch (e) {
+        console.log(e)
+    }
 
 }
 
