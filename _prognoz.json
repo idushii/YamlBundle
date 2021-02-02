@@ -1,0 +1,284 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.1",
+    "title": "Megainsight client API",
+    "description": ""
+  },
+  "host": "cl-b-test.ai.prognoz.me",
+  "basePath": "/clientapi/v1",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "JWT": {
+      "name": "Authorization",
+      "type": "apiKey",
+      "in": "header"
+    }
+  },
+  "paths": {
+    "/coupons": {
+      "get": {
+        "operationId": "get-coupons",
+        "summary": "Список купонов",
+        "tags": [
+          "Купоны"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "type": "integer",
+            "name": "page",
+            "description": "Пагинация"
+          },
+          {
+            "in": "query",
+            "type": "integer",
+            "name": "perPage",
+            "description": "Записей на страницу"
+          },
+          {
+            "in": "query",
+            "type": "string",
+            "enum": [
+              "personal",
+              "common"
+            ],
+            "name": "type",
+            "description": "Фильтр по типам купонов - персональные или общие"
+          }
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/couponShort"
+                  }
+                },
+                "meta": {
+                  "$ref": "#/definitions/MetaPagination"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/coupons/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "type": "integer",
+          "required": true,
+          "description": "Id купона"
+        }
+      ],
+      "get": {
+        "operationId": "get-coupon",
+        "summary": "Получение купона",
+        "tags": [
+          "Купоны"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/couponFull"
+            }
+          }
+        }
+      }
+    },
+    "/places": {
+      "get": {
+        "operationId": "get-places",
+        "summary": "Список торговых точек",
+        "tags": [
+          "Торговые точки"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/place"
+                  }
+                },
+                "meta": {
+                  "$ref": "#/definitions/MetaPagination"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "couponShort": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string",
+          "description": "Название купона"
+        },
+        "finishedAt": {
+          "type": "string",
+          "description": "Дата окончания в формате 01.01.2021"
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "Ссылка на файл изображения купона"
+        }
+      }
+    },
+    "couponFull": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string",
+          "description": "Название купона"
+        },
+        "description": {
+          "type": "string",
+          "description": "Описание купона"
+        },
+        "finishedAt": {
+          "type": "string",
+          "description": "Дата окончания в формате 2021-05-21"
+        },
+        "finishedAtLabel": {
+          "type": "string",
+          "description": "Надпись даты окончания в формате до 25 января 2020"
+        },
+        "placeIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Id торговых точек"
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "Ссылка на файл изображения купона"
+        },
+        "galleryUrls": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Ссылка на файл изображения галереи купона"
+          }
+        }
+      }
+    },
+    "place": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Id торговой точки"
+        },
+        "title": {
+          "type": "string",
+          "description": "Название торговой точки"
+        },
+        "address": {
+          "type": "string",
+          "description": "Адрес торговой точки"
+        },
+        "latitude": {
+          "type": "number",
+          "description": "Широта торговой точки"
+        },
+        "longtitude": {
+          "type": "number",
+          "description": "Долгота торговой точки"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/placeService"
+          }
+        }
+      }
+    },
+    "placeService": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Название услуги"
+        },
+        "iconUrl": {
+          "type": "string",
+          "description": "Ссылка на файл иконки услуги"
+        }
+      }
+    },
+    "MetaPagination": {
+      "title": "MetaPagination",
+      "type": "object",
+      "x-examples": {
+        "meta-pagination-example": {
+          "currentPage": 1,
+          "perPage": 15,
+          "lastPage": 1,
+          "total": 10
+        }
+      },
+      "description": "Модель с данными для пагинации",
+      "properties": {
+        "currentPage": {
+          "type": "integer"
+        },
+        "perPage": {
+          "type": "integer"
+        },
+        "lastPage": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}
