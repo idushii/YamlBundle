@@ -10,6 +10,7 @@ const {exec, execSync} = require('child_process');
 
 const remoteFileUrl = 'https://swagger.prognoz.me/swagger-client.json';
 const tempFile = '_prognoz.json';
+const projectFolder = 'prognoz_api_sdk';
 
 async function downloadFile() {
     const res = await fetch(remoteFileUrl);
@@ -64,8 +65,8 @@ async function main() {
 
     fs.writeFileSync(tempFile, listYamls)
 
-    const cmd = `openapi-generator-cli generate --input-spec ${tempFile} --generator-name dart --output ../prognoz_api_sdk -t "./all-templates/dart2" --config open-generator-config-prognoz.yaml`
-    const cmdSendRepo = `cd ../ && git add * && git commit "update" && git push`
+    const cmd = `openapi-generator-cli generate --input-spec ${tempFile} --generator-name dart --output ../${projectFolder} -t "./all-templates/dart2" --config open-generator-config-prognoz.yaml`
+    const cmdSendRepo = `cd ../${projectFolder} && git add * && git commit "update ${new Date().toISOString()}" && git push`
 
     console.log(`run '${cmd}'`)
 
