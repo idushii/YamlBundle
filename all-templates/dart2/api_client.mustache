@@ -103,17 +103,32 @@ class ApiClient {
     if (getAuthToken != null)
       headerParams.addAll(await getAuthToken());
 
-    final urlEncodedQueryParams = queryParams
-      .where((param) => param.value != null)
-      .map((param) => '$param');
+                        var _queryParams = queryParams
+                        .where((param) => param.value != null);
 
-    final queryString = urlEncodedQueryParams.isNotEmpty
-      ? '?${urlEncodedQueryParams.join('&')}'
-      : '';
+                        List<String> queryString = [];
 
-    final url = '$basePath$path$queryString';
+                            if (_queryParams.isNotEmpty) {
+                            queryString = [];
+                            Map<String, int> _queryParamsKeys = {};
 
-    if (nullableContentType != null) {
+                            _queryParams.forEach((element) {
+                            _queryParamsKeys["${element.name}"] = _queryParams
+                            .where((item) => item.name == element.name)
+                            .length;
+                            });
+
+                            _queryParams.forEach((element) {
+                            String name = element.name;
+                            if (_queryParamsKeys["$name"] > 1) name = "$name[]";
+                            queryString.add("$name=${element.value}");
+                            });
+                            }
+
+                            final url = '$basePath$path${queryString.isNotEmpty ? '?' + queryString.join('&') : ''}';
+
+
+                            if (nullableContentType != null) {
       headerParams['Content-Type'] = nullableContentType;
     }
 
