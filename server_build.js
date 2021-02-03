@@ -5,7 +5,7 @@ const {exec, execSync} = require('child_process');
 
 const  requestHandler = async (request, response) => {
     console.log(request.url)
-    if (request.url === '/app1') {
+    if (request.url === '/ping') {
         response.end('pong');
     } else if (request.url === '/app1') {
         console.log('/app1');
