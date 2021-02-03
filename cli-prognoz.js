@@ -74,14 +74,13 @@ async function main() {
         const res = await execSync(cmd);
         console.log(String.fromCharCode.apply(null, res));
     } catch (e) {
-        e
+        console.log(String.fromCharCode.apply(null, e.output[1]));
     }
 
     try {
         const res2 = (await (execSync(cmdSendRepo)));
         console.log(String.fromCharCode.apply(null, res2));
     } catch (e) {
-        console.log(e.output[1])
         console.log(String.fromCharCode.apply(null, e.output[1]));
     }
 

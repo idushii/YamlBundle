@@ -216,7 +216,7 @@
           "type": "string",
           "description": "Id торговой точки"
         },
-        "title": {
+        "name": {
           "type": "string",
           "description": "Название торговой точки"
         },
