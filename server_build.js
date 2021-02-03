@@ -6,6 +6,8 @@ const {exec, execSync} = require('child_process');
 const  requestHandler = async (request, response) => {
     console.log(request.url)
     if (request.url === '/app1') {
+        response.end('pong');
+    } else if (request.url === '/app1') {
         console.log('/app1');
         try {
             const res2 = (await (execSync('node cli-prognoz.js')));
