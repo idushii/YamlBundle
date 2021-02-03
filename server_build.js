@@ -7,7 +7,7 @@ const  requestHandler = async (request, response) => {
     console.log(request.url)
     if (request.url === '/ping') {
         response.end('pong');
-    } else if (request.url === '/app1') {
+    } else if (request.url === '/prognoz') {
         console.log('/app1');
         try {
             const res2 = (await (execSync('node cli-prognoz.js')));
