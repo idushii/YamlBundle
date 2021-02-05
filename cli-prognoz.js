@@ -77,6 +77,8 @@ async function main() {
         console.log(String.fromCharCode.apply(null, e.output[1]));
     }
 
+    fs.writeFileSync(`${projectFolder}/openapi.json`, listYamls, {encoding: 'utf-8'});
+
     try {
         const res2 = (await (execSync(cmdSendRepo)));
         console.log(String.fromCharCode.apply(null, res2));
