@@ -106,7 +106,12 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/couponFull"
+              "type": "object",
+              "properties": {
+                "data": {
+                  "$ref": "#/definitions/couponFull"
+                }
+              }
             }
           }
         }
@@ -144,6 +149,68 @@
           }
         }
       }
+    },
+    "/content/{code}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "code",
+          "type": "string",
+          "enum": [
+            "walkthoughs",
+            "loyalty-programs",
+            "faq",
+            "info-coupon",
+            "privacy-policy",
+            "faq-common",
+            "faq-loyalty-program",
+            "faq-points",
+            "faq-problems"
+          ],
+          "required": true,
+          "description": "Код раздела"
+        },
+        {
+          "in": "query",
+          "type": "integer",
+          "name": "page",
+          "description": "Пагинация для статей, входящих в раздел"
+        },
+        {
+          "in": "query",
+          "type": "integer",
+          "name": "perPage",
+          "description": "Статей раздела на страницу"
+        }
+      ],
+      "get": {
+        "operationId": "get-content-section",
+        "summary": "Получение раздела со статьями",
+        "tags": [
+          "Контент"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "$ref": "#/definitions/contentSection"
+                },
+                "meta": {
+                  "$ref": "#/definitions/MetaPagination"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -159,7 +226,11 @@
         },
         "finishedAt": {
           "type": "string",
-          "description": "Дата окончания в формате 01.01.2021"
+          "description": "Дата окончания в формате 2020-11-08T00:00:00"
+        },
+        "finishedAtLabel": {
+          "type": "string",
+          "description": "Надпись даты окончания в формате до 25 января 2020"
         },
         "imageUrl": {
           "type": "string",
@@ -183,7 +254,7 @@
         },
         "finishedAt": {
           "type": "string",
-          "description": "Дата окончания в формате 2021-05-21"
+          "description": "Дата окончания в формате 2020-11-08T00:00:00"
         },
         "finishedAtLabel": {
           "type": "string",
@@ -206,6 +277,14 @@
             "type": "string",
             "description": "Ссылка на файл изображения галереи купона"
           }
+        },
+        "number": {
+          "type": "string",
+          "description": "код купона из 10 цифр"
+        },
+        "barcode": {
+          "type": "string",
+          "description": "Шрих-код купона в формате изображения в base64"
         }
       }
     },
@@ -214,6 +293,7 @@
       "properties": {
         "id": {
           "type": "string",
+          "format": "uuid",
           "description": "Id торговой точки"
         },
         "name": {
@@ -243,6 +323,10 @@
     "placeService": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Id услуги"
+        },
         "name": {
           "type": "string",
           "description": "Название услуги"
@@ -250,6 +334,87 @@
         "iconUrl": {
           "type": "string",
           "description": "Ссылка на файл иконки услуги"
+        }
+      }
+    },
+    "contentArticle": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Id статьи"
+        },
+        "title": {
+          "type": "integer",
+          "description": "Заголовок статьи"
+        },
+        "description": {
+          "type": "integer",
+          "description": "Текст статьи"
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "Ссылка на изображение статьи"
+        },
+        "sort": {
+          "type": "integer",
+          "description": "Индекс сортировки"
+        }
+      }
+    },
+    "contentSubSection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Id статьи"
+        },
+        "title": {
+          "type": "integer",
+          "description": "Заголовок статьи"
+        },
+        "description": {
+          "type": "integer",
+          "description": "Текст статьи"
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "Ссылка на изображение статьи"
+        },
+        "sort": {
+          "type": "integer",
+          "description": "Индекс сортировки"
+        },
+        "children": {
+          "$ref": "#/definitions/contentArticle"
+        }
+      }
+    },
+    "contentSection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Id статьи"
+        },
+        "title": {
+          "type": "integer",
+          "description": "Заголовок статьи"
+        },
+        "description": {
+          "type": "integer",
+          "description": "Текст статьи"
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "Ссылка на изображение статьи"
+        },
+        "sort": {
+          "type": "integer",
+          "description": "Индекс сортировки"
+        },
+        "children": {
+          "$ref": "#/definitions/contentSubSection"
         }
       }
     },
