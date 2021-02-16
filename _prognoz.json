@@ -1,449 +1,909 @@
-{
-  "swagger": "2.0",
-  "info": {
-    "version": "1.0.1",
-    "title": "Megainsight client API",
-    "description": ""
-  },
-  "host": "cl-b-test.ai.prognoz.me",
-  "basePath": "/clientapi/v1",
-  "schemes": [
-    "http"
-  ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
-  "securityDefinitions": {
-    "JWT": {
-      "name": "Authorization",
-      "type": "apiKey",
-      "in": "header"
-    }
-  },
-  "paths": {
-    "/coupons": {
-      "get": {
-        "operationId": "get-coupons",
-        "summary": "Список купонов",
-        "tags": [
-          "Купоны"
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "type": "integer",
-            "name": "page",
-            "description": "Пагинация"
-          },
-          {
-            "in": "query",
-            "type": "integer",
-            "name": "perPage",
-            "description": "Записей на страницу"
-          },
-          {
-            "in": "query",
-            "type": "string",
-            "enum": [
-              "personal",
-              "common"
-            ],
-            "name": "type",
-            "description": "Фильтр по типам купонов - персональные или общие"
-          }
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/couponShort"
-                  }
-                },
-                "meta": {
-                  "$ref": "#/definitions/MetaPagination"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/coupons/{id}": {
-      "parameters": [
-        {
-          "in": "path",
-          "name": "id",
-          "type": "integer",
-          "required": true,
-          "description": "Id купона"
-        }
-      ],
-      "get": {
-        "operationId": "get-coupon",
-        "summary": "Получение купона",
-        "tags": [
-          "Купоны"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "$ref": "#/definitions/couponFull"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/places": {
-      "get": {
-        "operationId": "get-places",
-        "summary": "Список торговых точек",
-        "tags": [
-          "Торговые точки"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/place"
-                  }
-                },
-                "meta": {
-                  "$ref": "#/definitions/MetaPagination"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/content/{code}": {
-      "parameters": [
-        {
-          "in": "path",
-          "name": "code",
-          "type": "string",
-          "enum": [
-            "walkthoughs",
-            "loyalty-programs",
-            "faq",
-            "info-coupon",
-            "privacy-policy",
-            "faq-common",
-            "faq-loyalty-program",
-            "faq-points",
-            "faq-problems"
-          ],
-          "required": true,
-          "description": "Код раздела"
-        },
-        {
-          "in": "query",
-          "type": "integer",
-          "name": "page",
-          "description": "Пагинация для статей, входящих в раздел"
-        },
-        {
-          "in": "query",
-          "type": "integer",
-          "name": "perPage",
-          "description": "Статей раздела на страницу"
-        }
-      ],
-      "get": {
-        "operationId": "get-content-section",
-        "summary": "Получение раздела со статьями",
-        "tags": [
-          "Контент"
-        ],
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "$ref": "#/definitions/contentSection"
-                },
-                "meta": {
-                  "$ref": "#/definitions/MetaPagination"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "definitions": {
-    "couponShort": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer"
-        },
-        "name": {
-          "type": "string",
-          "description": "Название купона"
-        },
-        "finishedAt": {
-          "type": "string",
-          "description": "Дата окончания в формате 2020-11-08T00:00:00"
-        },
-        "finishedAtLabel": {
-          "type": "string",
-          "description": "Надпись даты окончания в формате до 25 января 2020"
-        },
-        "imageUrl": {
-          "type": "string",
-          "description": "Ссылка на файл изображения купона"
-        }
-      }
-    },
-    "couponFull": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer"
-        },
-        "name": {
-          "type": "string",
-          "description": "Название купона"
-        },
-        "description": {
-          "type": "string",
-          "description": "Описание купона"
-        },
-        "finishedAt": {
-          "type": "string",
-          "description": "Дата окончания в формате 2020-11-08T00:00:00"
-        },
-        "finishedAtLabel": {
-          "type": "string",
-          "description": "Надпись даты окончания в формате до 25 января 2020"
-        },
-        "placeIds": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Id торговых точек"
-        },
-        "imageUrl": {
-          "type": "string",
-          "description": "Ссылка на файл изображения купона"
-        },
-        "galleryUrls": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "description": "Ссылка на файл изображения галереи купона"
-          }
-        },
-        "number": {
-          "type": "string",
-          "description": "код купона из 10 цифр"
-        },
-        "barcode": {
-          "type": "string",
-          "description": "Шрих-код купона в формате изображения в base64"
-        }
-      }
-    },
-    "place": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "uuid",
-          "description": "Id торговой точки"
-        },
-        "name": {
-          "type": "string",
-          "description": "Название торговой точки"
-        },
-        "address": {
-          "type": "string",
-          "description": "Адрес торговой точки"
-        },
-        "latitude": {
-          "type": "number",
-          "description": "Широта торговой точки"
-        },
-        "longtitude": {
-          "type": "number",
-          "description": "Долгота торговой точки"
-        },
-        "services": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/placeService"
-          }
-        }
-      }
-    },
-    "placeService": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "description": "Id услуги"
-        },
-        "name": {
-          "type": "string",
-          "description": "Название услуги"
-        },
-        "iconUrl": {
-          "type": "string",
-          "description": "Ссылка на файл иконки услуги"
-        }
-      }
-    },
-    "contentArticle": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "description": "Id статьи"
-        },
-        "title": {
-          "type": "integer",
-          "description": "Заголовок статьи"
-        },
-        "description": {
-          "type": "integer",
-          "description": "Текст статьи"
-        },
-        "imageUrl": {
-          "type": "string",
-          "description": "Ссылка на изображение статьи"
-        },
-        "sort": {
-          "type": "integer",
-          "description": "Индекс сортировки"
-        }
-      }
-    },
-    "contentSubSection": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "description": "Id статьи"
-        },
-        "title": {
-          "type": "integer",
-          "description": "Заголовок статьи"
-        },
-        "description": {
-          "type": "integer",
-          "description": "Текст статьи"
-        },
-        "imageUrl": {
-          "type": "string",
-          "description": "Ссылка на изображение статьи"
-        },
-        "sort": {
-          "type": "integer",
-          "description": "Индекс сортировки"
-        },
-        "children": {
-          "$ref": "#/definitions/contentArticle"
-        }
-      }
-    },
-    "contentSection": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "description": "Id статьи"
-        },
-        "title": {
-          "type": "integer",
-          "description": "Заголовок статьи"
-        },
-        "description": {
-          "type": "integer",
-          "description": "Текст статьи"
-        },
-        "imageUrl": {
-          "type": "string",
-          "description": "Ссылка на изображение статьи"
-        },
-        "sort": {
-          "type": "integer",
-          "description": "Индекс сортировки"
-        },
-        "children": {
-          "$ref": "#/definitions/contentSubSection"
-        }
-      }
-    },
-    "MetaPagination": {
-      "title": "MetaPagination",
-      "type": "object",
-      "x-examples": {
-        "meta-pagination-example": {
-          "currentPage": 1,
-          "perPage": 15,
-          "lastPage": 1,
-          "total": 10
-        }
-      },
-      "description": "Модель с данными для пагинации",
-      "properties": {
-        "currentPage": {
-          "type": "integer"
-        },
-        "perPage": {
-          "type": "integer"
-        },
-        "lastPage": {
-          "type": "integer"
-        },
-        "total": {
-          "type": "integer"
-        }
-      }
-    }
-  }
-}
+swagger: '2.0'
+info:
+  version: 1.0.4
+  title: Megainsight client API
+  description: ''
+host: 'cl-b-test.ai.prognoz.me'
+basePath: /clientapi/v1
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  JWT:
+    name: Authorization
+    type: apiKey
+    in: header
+paths:
+  '/auth':
+    parameters:
+      - in: query
+        name: phoneNumber
+        type: string
+        required: true
+        description: Номер телефона клиента в формате 79139050305
+    get:
+      operationId: auth
+      summary: Запрос одноразового пароля по номеру телефона
+      tags:
+        - Авторизация и регистрация
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  message:
+                    type: string
+  '/complete_auth':
+    post:
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: phoneNumber
+          type: string
+          required: true
+          description: Номер телефона клиента в формате 79139050305
+        - in: formData
+          name: code
+          type: string
+          required: true
+          description: Одноразовый пароль клиента из СМС
+        - in: formData
+          name: deviceToken
+          type: string
+          required: true
+          description: Device token устройства
+      operationId: complete-auth
+      summary: Проверка одноразового пароля авторизации/регистрации
+      tags:
+        - Авторизация и регистрация
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  token:
+                    type: string
+  '/me':
+    get:
+      operationId: client-info
+      summary: Получение информации о клиенте
+      tags:
+        - Клиент
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/definitions/client'
+    post:
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: phoneNumber
+          type: string
+          description: Номер телефона
+        - in: formData
+          name: email
+          type: string
+          description: Email
+        - in: formData
+          name: city
+          type: string
+          description: Город
+        - in: formData
+          name: name
+          type: string
+          description: Имя
+        - in: formData
+          name: surname
+          type: string
+          description: Фамилия
+        - in: formData
+          name: favoriteFuelId
+          type: string
+          description: Id любимого вида топлива
+        - in: formData
+          name: VK
+          type: string
+          description: ВКонтакте клиента
+        - in: formData
+          name: Facebook
+          type: string
+          description: Facebook клиента
+      operationId: update-client-info
+      summary: Обновление информации о клиенте
+      tags:
+        - Клиент
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/definitions/client'
+  '/me/qrcode':
+    get:
+      operationId: client-qr-code
+      summary: Получение временного QR-кода клиента
+      tags:
+        - Клиент
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  qrcode:
+                    type: string
+                    description: Временный QR-код клиента для авторизации на кассе, формат изображения base64
+  '/device/settings/list':
+    post:
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: deviceUdid
+          type: string
+          required: true
+          description: Udid устройства
+        - in: formData
+          name: deviceToken
+          type: string
+          required: true
+          description: Device token устройства
+        - in: formData
+          name: deviceType
+          type: string
+          enum:
+            - android
+            - ios
+          required: true
+          description: Тип устройства
+      operationId: device-settings-list
+      summary: Получение информации о настройках устройства
+      tags:
+        - Устройство
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/definitions/deviceSettings'
+  '/device/settings/save':
+    post:
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: deviceToken
+          type: string
+          required: true
+          description: Device token устройства
+        - in: formData
+          name: geoEnabled
+          type: boolean
+          description: Геолокация включена
+        - in: formData
+          name: notificationsEnabled
+          type: boolean
+          description: Все уведомления включены
+        - in: formData
+          name: adEnabled
+          type: boolean
+          description: Все рекламные акции включены
+        - in: formData
+          name: personalOffersEnabled
+          type: boolean
+          description: Индивидуальные предложения включены
+        - in: formData
+          name: techInfoEnabled
+          type: boolean
+          description: Техническая информация включена
+      operationId: device-settings-save
+      summary: Сохранение информации о настройках устройства
+      tags:
+        - Устройство
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/definitions/deviceSettings'
+  '/coupons':
+    get:
+      operationId: get-coupons
+      summary: Список общих купонов
+      tags:
+        - Купоны
+      parameters:
+        - in: query
+          type: integer
+          name: page
+          description: Пагинация
+        - in: query
+          type: integer
+          name: perPage
+          description: Записей на страницу
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/couponShort'
+              meta:
+                $ref: '#/definitions/MetaPagination'
+  '/me/coupons':
+    get:
+      operationId: client-coupons
+      summary: Список персональных купонов клиента
+      tags:
+        - Купоны
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/couponShort'
+  '/me/remind/coupons/{id}':
+    post:
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+          description: Id купона
+        - in: formData
+          name: remind
+          type: boolean
+          required: true
+          description: Признак уведомления у купона. Отправлять 0 либо 1
+      operationId: set-coupon-remind
+      summary: Установка признака уведомления клиента о купоне при приближении к заправке
+      tags:
+        - Купоны
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+  '/me/remind/coupons':
+    post:
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: placeIds
+          type: array
+          items:
+            type: string
+          required: true
+          description: Id ближайших заправок
+      operationId: client-coupons-remind
+      summary: Отправка уведомлений о купонах при приближении к ближайшей АЗС
+      tags:
+        - Купоны
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+  '/coupons/{id}':
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: Id купона
+    get:
+      operationId: get-coupon
+      summary: Получение купона
+      tags:
+        - Купоны
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/definitions/couponFull'
+  '/places':
+    parameters:
+      - in: query
+        type: array
+        items:
+          type: string
+        name: productIds
+        required: false
+        description: Фильтр торговый точек по товарам (топливу)
+      - in: query
+        type: array
+        items:
+          type: string
+        name: serviceIds
+        required: false
+        description: Фильтр торговый точек по видам услуг
+      - in: query
+        name: search
+        type: string
+        required: false
+        description: Поисковый запрос
+    get:
+      operationId: get-places
+      summary: Список торговых точек
+      tags:
+        - Торговые точки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/place'
+              meta:
+                $ref: '#/definitions/MetaPagination'
+  '/place_services':
+    get:
+      operationId: get-place-services
+      summary: Список услуг торговых точек
+      tags:
+        - Услуги торговых точек
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/placeService'
+  '/products':
+    get:
+      operationId: get-products
+      summary: Список товаров (видов топлива)
+      tags:
+        - Товары
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/product'
+  '/content/{code}':
+    parameters:
+      - in: path
+        name: code
+        type: string
+        enum:
+          - walkthoughs
+          - loyalty-programs
+          - faq
+          - info-coupon
+          - privacy-policy
+          - faq-common
+          - faq-loyalty-program
+          - faq-points
+          - faq-problems
+        required: true
+        description: Код раздела
+      - in: query
+        type: integer
+        name: page
+        description: Пагинация для статей, входящих в раздел
+      - in: query
+        type: integer
+        name: perPage
+        description: Статей раздела на страницу
+    get:
+      operationId: get-content-section
+      summary: Получение раздела со статьями
+      tags:
+        - Контент
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/definitions/contentSection'
+              meta:
+                $ref: '#/definitions/MetaPagination'
+  '/messages':
+    post:
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: subject
+          type: string
+          required: true
+          description: Код темы обращения
+        - in: formData
+          name: email
+          type: string
+          required: true
+          description: E-mail
+        - in: formData
+          name: fio
+          type: string
+          required: true
+          description: Имя
+        - in: formData
+          name: description
+          type: string
+          required: true
+          description: Текст обращения
+      operationId: add-message
+      summary: Добавление сообщения клиента
+      tags:
+        - Сообщения
+      security:
+        - JWT: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+  '/messages/subjects':
+    get:
+      operationId: get-message-subjects
+      summary: Получение списка тем сообщения
+      tags:
+        - Сообщения
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/messageSubject'
+definitions:
+  client:
+    type: object
+    properties:
+      cardId:
+        type: string
+        description: Номер карты лояльности клиента  (только просмотр)
+      phoneNumber:
+        type: string
+        description: Номер телефона клиента
+      email:
+        type: string
+        description: E-mail клиента
+      isEmailConfirmed:
+        type: boolean
+        description: E-mail клиента подтверждён?  (только просмотр)
+      city:
+        type: string
+        description: Город клиента
+      status:
+        $ref: '#/definitions/clientStatus'
+      fio:
+        type: string
+        description: Ф.И.О. клиента  (только просмотр)
+      name:
+        type: string
+        description: Имя клиента
+      surname:
+        type: string
+        description: Фамилия клиента
+      balance:
+        type: integer
+        description: Баланс клиента  (только просмотр)
+      favoriteFuelId:
+        type: string
+        description: Id любимого вида топлива клиента
+      favoriteFuelName:
+        type: string
+        description: Название любимого вид топлива клиента (только просмотр)
+      createdAt:
+        type: string
+        description: Дата регистрации  (только просмотр)
+      VK:
+        type: string
+        description: VK клиента
+      Facebook:
+        type: string
+        description: Facebook клиента
+  clientStatus:
+    type: object
+    description: Статус клиента
+    properties:
+      id:
+        type: string
+        enum:
+          - active
+          - inactive
+          - blocked
+        description: "Код статуса клиента"
+      name:
+        type: string
+        description: "Название статуса клиента"
+      remindedAt:
+        type: string
+        description: "Дата и время последнего уведомления о купонах при приближении к АЗС"
+      hasCouponReminds:
+        type: boolean
+        description: "Признак, что у клиента есть актуальные купоны с уведомлениями"
+  deviceSettings:
+    type: object
+    properties:
+      geoEnabled:
+        type: boolean
+        description: Геолокация включена
+      notificationsEnabled:
+        type: boolean
+        description: Все уведомления включены
+      adEnabled:
+        type: boolean
+        description: Все рекламные акции включены
+      personalOffersEnabled:
+        type: boolean
+        description: Индивидуальные предложения включены
+      techInfoEnabled:
+        type: boolean
+        description: Техническая информация включена
+  couponShort:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+        description: Название купона
+      finishedAt:
+        type: string
+        description: Дата окончания в формате 2020-11-08T00:00:00
+      finishedAtLabel:
+        type: string
+        description: Надпись даты окончания в формате до 25 января 2020
+      imageUrl:
+        type: string
+        description: Ссылка на файл изображения купона
+      placeIds:
+        type: array
+        items:
+          type: string
+        description: Id торговых точек
+      remind:
+        type: boolean
+        description: Признак уведомлять ли о купоне при приближении к АЗС
+  couponFull:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+        description: Название купона
+      description:
+        type: string
+        description: Описание купона
+      finishedAt:
+        type: string
+        description: Дата окончания в формате 2020-11-08T00:00:00
+      finishedAtLabel:
+        type: string
+        description: Надпись даты окончания в формате до 25 января 2020
+      placeIds:
+        type: array
+        items:
+          type: string
+        description: Id торговых точек
+      imageUrl:
+        type: string
+        description: Ссылка на файл изображения купона
+      galleryUrls:
+        type: array
+        items:
+          type: string
+          description: Ссылка на файл изображения галереи купона
+      number:
+        type: string
+        description: код купона из 10 цифр
+      barcode:
+        type: string
+        description: Шрих-код купона в формате изображения в base64
+      remind:
+        type: boolean
+        description: Признак уведомлять ли о купоне при приближении к АЗС
+  place:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: Id торговой точки
+      name:
+        type: string
+        description: Название торговой точки
+      address:
+        type: string
+        description: Адрес торговой точки
+      latitude:
+        type: number
+        description: Широта торговой точки
+      longtitude:
+        type: number
+        description: Долгота торговой точки
+      services:
+        type: array
+        items:
+          $ref: '#/definitions/placeService'
+      products:
+        type: array
+        items:
+          $ref: '#/definitions/product'
+  placeService:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Id услуги
+      name:
+        type: string
+        description: Название услуги
+      iconUrl:
+        type: string
+        description: Ссылка на файл иконки услуги
+  product:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      externalId:
+        type: string
+        description: Номенклатурный номер товара
+      name:
+        type: string
+        description: Название товара
+      type:
+        $ref: '#/definitions/productType'
+      isBonus:
+        type: boolean
+        description: Признак участия в бонусной программе
+      bonusAdd:
+        type: array
+        items:
+          type: number
+        description: Коэффициенты накопления баллов
+      bonusDel:
+        type: array
+        items:
+          type: number
+        description: Коэффициенты списания баллов
+      bonusAddLabel:
+        type: string
+        description: Коэффициенты накопления баллов на просмотре товара
+      bonusDelLabel:
+        type: string
+        description: Коэффициенты списания баллов на просмотре товара
+  productType:
+    type: object
+    description: Тип товара
+    properties:
+      id:
+        type: integer
+        description: "Код типа товара"
+      name:
+        type: string
+        description: "Название типа товара"
+  contentArticle:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Id статьи
+      code:
+        type: string
+        description: Код статьи
+      title:
+        type: string
+        description: Заголовок статьи
+      description:
+        type: string
+        description: Текст статьи
+      imageUrl:
+        type: string
+        description: Ссылка на изображение статьи
+      sort:
+        type: integer
+        description: Индекс сортировки
+      buttons:
+        type: array
+        items:
+          type: string
+          enum:
+            - next
+            - enable-notifications
+            - enable-geo
+            - auth
+            - without-auth
+      contentButtons:
+        type: array
+        items:
+          $ref: '#/definitions/contentButton'
+  contentButton:
+    type: object
+    properties:
+      action:
+        type: string
+        enum:
+          - next
+          - enable-notifications
+          - enable-geo
+          - auth
+          - without-auth
+        description: Действие по нажатию кнопки
+      label:
+        type: string
+        description: Надпись на кнопке
+  contentSubSection:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Id подраздела
+      code:
+        type: string
+        description: Код подраздела
+      title:
+        type: string
+        description: Заголовок статьи
+      description:
+        type: string
+        description: Текст статьи
+      imageUrl:
+        type: string
+        description: Ссылка на изображение статьи
+      sort:
+        type: integer
+        description: Индекс сортировки
+      buttons:
+        type: array
+        items:
+          type: string
+          enum:
+            - next
+            - enable-notifications
+            - enable-geo
+            - auth
+            - without-auth
+      contentButtons:
+        type: array
+        items:
+          $ref: '#/definitions/contentButton'
+      children:
+        type: array
+        items:
+          $ref: '#/definitions/contentArticle'
+  contentSection:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Id раздела
+      code:
+        type: string
+        description: Код раздела
+      title:
+        type: string
+        description: Заголовок статьи
+      description:
+        type: string
+        description: Текст статьи
+      imageUrl:
+        type: string
+        description: Ссылка на изображение статьи
+      sort:
+        type: integer
+        description: Индекс сортировки
+      children:
+        type: array
+        items:
+          $ref: '#/definitions/contentSubSection'
+  messageSubject:
+    type: object
+    description: Тема сообщения
+    properties:
+      id:
+        type: string
+        description: "Код темы сообщения"
+      name:
+        type: string
+        description: "Название темы сообщения"
+  MetaPagination:
+    title: MetaPagination
+    type: object
+    x-examples:
+      meta-pagination-example:
+        currentPage: 1
+        perPage: 15
+        lastPage: 1
+        total: 10
+    description: Модель с данными для пагинации
+    properties:
+      currentPage:
+        type: integer
+      perPage:
+        type: integer
+      lastPage:
+        type: integer
+      total:
+        type: integer

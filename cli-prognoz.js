@@ -8,7 +8,7 @@ let path = require('path');
 const {exec, execSync} = require('child_process');
 
 
-const remoteFileUrl = 'https://swagger.prognoz.me/swagger-client.json';
+const remoteFileUrl = 'https://swagger.prognoz.me/swagger-client.yml';
 const tempFile = '_prognoz.json';
 const projectFolder = 'prognoz_api_sdk';
 
@@ -77,7 +77,7 @@ async function main() {
         console.log(String.fromCharCode.apply(null, e.output[1]));
     }
 
-    fs.writeFileSync(`../${projectFolder}/openapi.json`, listYamls, {encoding: 'utf-8'});
+    fs.writeFileSync(`../${projectFolder}/openapi.yaml`, listYamls, {encoding: 'utf-8'});
 
     try {
         const res2 = (await (execSync(cmdSendRepo)));
