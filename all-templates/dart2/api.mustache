@@ -79,7 +79,9 @@ class {{{classname}}} {
     final path = '{{{path}}}'.replaceAll('{format}', 'json'){{#pathParams}}
       .replaceAll('{' + '{{{baseName}}}' + '}', {{{paramName}}}.toString()){{/pathParams}};
 
-    Object postBody{{#bodyParam}} = {{{paramName}}}{{/bodyParam}};
+    Object postBody = {
+        {{#formParams}} '{{{baseName}}}': {{{paramName}}}, {{/formParams}}
+      };
 
     final queryParams = <QueryParam>[];
     final headerParams = <String, String>{};
