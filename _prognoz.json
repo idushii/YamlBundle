@@ -643,6 +643,21 @@ definitions:
       remind:
         type: boolean
         description: Признак уведомлять ли о купоне при приближении к АЗС
+      productId:
+        type: string
+        description: Id товара
+      productExternalId:
+        type: string
+        description: Номенклатурный номер товара
+      productName:
+        type: string
+        description: Название товара
+      price:
+        type: number
+        description: Цена товара по купону
+      productTypeId:
+        type: integer
+        description: Id типа товара. Если равно 1, то это цена любимого топлива клиента
   couponFull:
     type: object
     properties:

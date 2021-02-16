@@ -32,7 +32,9 @@ Iterable<QueryParam> _convertParametersForCollectionFormat(
 
       final delimiter = _delimiters[collectionFormat] ?? ',';
 
-      params.add(QueryParam(name, value.map((v) => parameterToString(v)).join(delimiter)));
+        value.forEach((element) {
+            params.add(QueryParam(name, parameterToString(element)));
+        });
     } else {
       params.add(QueryParam(name, parameterToString(value)));
     }
