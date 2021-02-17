@@ -120,7 +120,8 @@ class ApiClient {
 
                             _queryParams.forEach((element) {
                             String name = element.name;
-                            if (_queryParamsKeys["$name"] > 1) name = "$name[]";
+                            if (_queryParamsKeys["$name"] > 1 && !name.contains('[]'))
+                            name = "$name[]";
                             queryString.add("$name=${element.value}");
                             });
                             }
@@ -129,8 +130,8 @@ class ApiClient {
 
 
                             if (nullableContentType != null) {
-      headerParams['Content-Type'] = nullableContentType;
-    }
+                            headerParams['Content-Type'] = nullableContentType;
+                            }
 
     try {
       // TODO отключил multipart

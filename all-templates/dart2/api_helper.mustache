@@ -7,7 +7,7 @@ class QueryParam {
   final String value;
 
   @override
-  String toString() => '${Uri.encodeQueryComponent(name)}=${Uri.encodeQueryComponent(value)}';
+  String toString() => '${name}=${Uri.encodeQueryComponent(value)}';
 }
 
 // Ported from the Java version.
@@ -33,7 +33,7 @@ Iterable<QueryParam> _convertParametersForCollectionFormat(
       final delimiter = _delimiters[collectionFormat] ?? ',';
 
         value.forEach((element) {
-            params.add(QueryParam(name, parameterToString(element)));
+          params.add(QueryParam("$name[]", parameterToString(element)));
         });
     } else {
       params.add(QueryParam(name, parameterToString(value)));
