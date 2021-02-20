@@ -32,7 +32,9 @@ async function main() {
     listYamls = listYamls.replaceAll('/api/v1/', '/')
 
 
-    listYamls = addDBOPostfix(listYamls);
+    // listYamls = addDBOPostfix(listYamls);
+
+    listYamls = listYamls.replaceAll('Notification', 'NotificationDBO');
 
     fs.writeFileSync(tempFile, listYamls)
 
