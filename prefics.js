@@ -3,10 +3,10 @@ function addDBOPostfix(yaml) {
 
     let lines = yaml.split('\n')
 
-    const startIndexLine = lines.findIndex((line) => line.includes('components:'));
+    const startIndexLine = lines.findIndex((line) => line.includes('components:') || line.includes('definitions:'));
     const endIndexLine = lines.findIndex((line) => line.includes('securitySchemes:'));
 
-    for(let i=startIndexLine; i< endIndexLine; i++) {
+    for(let i=startIndexLine; i< (endIndexLine == -1 ? lines.length : endIndexLine ); i++) {
         let line = lines[i];
 
         const res = /^    (\w){1,100}/gm.exec(line);
