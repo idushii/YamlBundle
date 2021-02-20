@@ -34,7 +34,7 @@ async function main() {
 
     // listYamls = addDBOPostfix(listYamls);
 
-    listYamls = listYamls.replaceAll('Notification', 'NotificationDBO');
+    listYamls = listYamls.replaceAll('notification', 'notificationDBO');
 
     fs.writeFileSync(tempFile, listYamls)
 
