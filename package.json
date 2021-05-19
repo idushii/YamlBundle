@@ -21,7 +21,7 @@
     "inflight": "^1.0.6",
     "foreach": "^2.0.5",
     "js-yaml": "^3.14.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "lodash.get": "^4.4.2",
     "json-pointer": "^0.6.0",
     "minimatch": "^3.0.4",
