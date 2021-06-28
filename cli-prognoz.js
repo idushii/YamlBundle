@@ -40,7 +40,7 @@ async function main() {
     fs.writeFileSync(tempFile, listYamls)
 
     const cmd = `openapi-generator-cli generate --input-spec ${tempFile} --generator-name dart --output ../${projectFolder} -t "./all-templates/dart2" --config open-generator-config-prognoz.yaml`
-    const cmdSendRepo = `cd ../${projectFolder} && git add * && git commit -m "update ${new Date().toISOString()}" && git push`
+    const cmdSendRepo = `cd ../${projectFolder} && git status && git add . && git commit -m "update ${new Date().toISOString()}" && git push`
 
     console.log(`run '${cmd}'`)
 
