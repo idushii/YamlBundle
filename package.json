@@ -24,7 +24,7 @@
     "lodash.isequal": "^4.5.0",
     "minimatch": "^3.0.4",
     "ms": "^2.0.0",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "node-telegram-bot-api": "^0.51.0",
     "once": "^1.4.0",
     "openapi-sampler": "^1.0.0-beta.15",
